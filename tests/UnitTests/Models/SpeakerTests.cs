@@ -14,7 +14,7 @@ public class SpeakerTests
     /// <summary>
     /// Gets or sets the Target.
     /// </summary>
-    private Speaker Target { get; set; }
+    private Speaker Target { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpeakerTests"/> class.
@@ -34,7 +34,7 @@ public class SpeakerTests
     [Fact]
     public void NameShouldBeWellBehaved()
     {
-        PropertyChecker.CheckProperty<string>(() => this.Target.Name);
+        PropertyChecker.CheckProperty<string?>(() => this.Target.Name);
         PropertyChecker.CheckInvariance(() => this.Target.Name);
     }
 

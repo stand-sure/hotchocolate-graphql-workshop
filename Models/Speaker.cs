@@ -14,17 +14,17 @@ public class Speaker
     /// </summary>
     [Required]
     [StringLength(200)]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// Gets or sets the Bio.
     /// </summary>
     [StringLength(4000)]
-    public string Bio { get; set; }
+    public string? Bio { get; set; }
 
     /// <summary>
     /// Gets or sets the Website.
     /// </summary>
     [StringLength(1000)]
-    public string Website { get; set; }
+    public string? Website { get; set; }
 }
