@@ -150,7 +150,11 @@ internal static class PropertyChecker
     /// <param name="expression">The property access expression.</param>
     /// <param name="readOnly">If <c>true</c>, then the property is not writable. Default is that properties are read-write.</param>
     /// <param name="expectedDefaultValue">The expected value from when the property is not explicitly set.</param>
-    public static void CheckProperty<T>(Expression<Func<object?>> expression, bool? readOnly = null, object? expectedDefaultValue = default)
+    public static void CheckProperty<T>(
+        Expression<Func<object?>> expression,
+        bool? readOnly = null,
+        object? expectedDefaultValue = default,
+        bool testDefaultEquivalence = false)
     {
         if (expression.Body is not UnaryExpression { Operand: MemberExpression memberExpression })
         {
@@ -180,7 +184,15 @@ internal static class PropertyChecker
         Delegate compile = lambda.Compile();
         object? actualDefault = compile.DynamicInvoke();
         expectedDefaultValue ??= PropertyChecker.GetDefault(typeof(T));
-        actualDefault.Should().Be(expectedDefaultValue);
+
+        if (testDefaultEquivalence)
+        {
+            actualDefault.Should().BeEquivalentTo(expectedDefaultValue);
+        }
+        else
+        {
+            actualDefault.Should().Be(expectedDefaultValue);
+        }
     }
 
     public static void CheckRequired(Expression<Func<object>> expression, bool allowEmptyStrings = false)

@@ -1,3 +1,2 @@
 ConferencePlanner.Data.ApplicationDbContext
-ConferencePlanner.Data.ApplicationDbContext.ApplicationDbContext(Microsoft.EntityFrameworkCore.DbContextOptions<ConferencePlanner.Data.ApplicationDbContext!>! options, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> void
-override ConferencePlanner.Data.ApplicationDbContext.OnConfiguring(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> void
+ConferencePlanner.Data.ApplicationDbContext.ApplicationDbContext(Microsoft.EntityFrameworkCore.DbContextOptions<ConferencePlanner.Data.ApplicationDbContext!>! options) -> void
