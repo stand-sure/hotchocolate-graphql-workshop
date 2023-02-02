@@ -8,6 +8,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable RS0016
+#pragma warning disable CS8981
+#pragma warning disable RS0041
+
 namespace ConferencePlanner.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
