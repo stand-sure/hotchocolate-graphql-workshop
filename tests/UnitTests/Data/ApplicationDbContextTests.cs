@@ -25,9 +25,9 @@ public class ApplicationDbContextTests
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseInMemoryDatabase("conference");
-        
+
         DbContextOptions<ApplicationDbContext> options = optionsBuilder.Options;
-        
+
         this.Target = new ApplicationDbContext(options);
     }
 
@@ -37,7 +37,7 @@ public class ApplicationDbContextTests
         this.CheckDbSetProperty<Speaker>(() => this.Target.Speakers);
         PropertyChecker.CheckInvariance(() => this.Target.Speakers);
     }
-    
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "Test code")]
     private void CheckDbSetProperty<T>(Expression<Func<object?>> expression)
         where T : class

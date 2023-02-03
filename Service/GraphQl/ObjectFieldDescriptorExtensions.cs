@@ -13,7 +13,7 @@ public static class ObjectFieldDescriptorExtensions
             provider => provider.GetRequiredService<IDbContextFactory<TDbContext>>().CreateDbContext(),
             disposeAsync: DisposeDbContextAsync);
     }
-    
+
     private static ValueTask DisposeDbContextAsync<TDbContext>(IServiceProvider serviceProvider, TDbContext dbContext) where TDbContext : DbContext
     {
         return ValueTask.CompletedTask;
