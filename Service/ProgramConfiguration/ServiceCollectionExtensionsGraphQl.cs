@@ -6,26 +6,26 @@ using ConferencePlanner.Service.Speaker;
 using HotChocolate.Diagnostics;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Execution.Options;
+using HotChocolate.Execution.Pipeline.Complexity;
 using HotChocolate.Types.Pagination;
 
 internal static class ServiceCollectionExtensionsGraphQl
 {
     private static ILogger logger = null!;
 
-    // ReSharper disable once UnusedMethodReturnValue.Global
     public static IServiceCollection AddGraphQl(this IServiceCollection serviceCollection)
     {
         MakeLogger(serviceCollection);
 
         IRequestExecutorBuilder builder = serviceCollection.AddGraphQLServer()
-            .ModifyOptions(ConfigureSchemaOptions())
+            .ModifyOptions(ConfigureSchemaOptions)
             .AddQueries()
             // .AddGlobalObjectIdentification()
             // .AddFiltering()
             // .AddSorting()
-            .ModifyRequestOptions(ConfigureRequestOptions())
+            .ModifyRequestOptions(ConfigureRequestOptions)
             .SetPagingOptions(ConfigurePagingOptions())
-            .AddDiagnosticEventListener(ConfigureDiagnosticEventListener())
+            .AddDiagnosticEventListener(ConfigureDiagnosticEventListener)
             .AddErrorFilters();
 
         builder.AddInstrumentation(ConfigureInstrumentationOptions);
@@ -33,33 +33,32 @@ internal static class ServiceCollectionExtensionsGraphQl
         return serviceCollection;
     }
 
-    private static Action<ISchemaOptions> ConfigureSchemaOptions()
+    private static void ConfigureSchemaOptions(ISchemaOptions options)
     {
-        return options =>
-        {
-            options.SortFieldsByName = true;
-            options.EnableFlagEnums = true;
-        };
+        options.SortFieldsByName = true;
+        options.EnableFlagEnums = true;
     }
 
-    private static Action<IServiceProvider, RequestExecutorOptions> ConfigureRequestOptions()
+    // ReSharper disable once UnusedParameter.Local
+#pragma warning disable S1172 //signature mattes
+    private static void ConfigureRequestOptions(IServiceProvider serviceProvider, RequestExecutorOptions options)
+#pragma warning restore S1172
     {
-        return (_, options) =>
-        {
-            options.IncludeExceptionDetails = true;
-            options.Complexity.Enable = true;
-            options.Complexity.ApplyDefaults = true;
+        options.IncludeExceptionDetails = true;
+        options.Complexity.Enable = true;
+        options.Complexity.ApplyDefaults = true;
 
-            options.Complexity.Calculation = context =>
-            {
-                int cost = context.Complexity + context.ChildComplexity;
-                var message = $"Cost: {context.Selection.Name} {cost}";
+        options.Complexity.Calculation = CalculateComplexity;
+    }
 
-                ServiceCollectionExtensionsGraphQl.logger.LogInformation("{message}", message);
+    private static int CalculateComplexity(ComplexityContext context)
+    {
+        int cost = context.Complexity + context.ChildComplexity;
+        var message = $"Cost: {context.Selection.Name} {cost}";
 
-                return cost;
-            };
-        };
+        ServiceCollectionExtensionsGraphQl.logger.LogInformation("{message}", message);
+
+        return cost;
     }
 
     private static PagingOptions ConfigurePagingOptions()
@@ -70,11 +69,10 @@ internal static class ServiceCollectionExtensionsGraphQl
         };
     }
 
-    private static Func<IServiceProvider, QueryLoggerDiagnosticEventListener> ConfigureDiagnosticEventListener()
+    private static QueryLoggerDiagnosticEventListener ConfigureDiagnosticEventListener(IServiceProvider provider)
     {
-        return provider =>
-            new QueryLoggerDiagnosticEventListener(
-                ActivatorUtilities.GetServiceOrCreateInstance<ILogger<QueryLoggerDiagnosticEventListener>>(provider));
+        return new QueryLoggerDiagnosticEventListener(
+            ActivatorUtilities.GetServiceOrCreateInstance<ILogger<QueryLoggerDiagnosticEventListener>>(provider));
     }
 
     internal static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder)
