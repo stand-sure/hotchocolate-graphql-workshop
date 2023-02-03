@@ -5,6 +5,7 @@ using ConferencePlanner.Service.Speaker;
 
 using HotChocolate.Diagnostics;
 using HotChocolate.Execution.Configuration;
+using HotChocolate.Execution.Options;
 using HotChocolate.Types.Pagination;
 
 internal static class ServiceCollectionExtensionsGraphQl
@@ -17,38 +18,14 @@ internal static class ServiceCollectionExtensionsGraphQl
         MakeLogger(serviceCollection);
 
         IRequestExecutorBuilder builder = serviceCollection.AddGraphQLServer()
-            .ModifyOptions(options =>
-            {
-                options.SortFieldsByName = true;
-                options.EnableFlagEnums = true;
-            })
+            .ModifyOptions(ConfigureSchemaOptions())
             .AddQueries()
             // .AddGlobalObjectIdentification()
             // .AddFiltering()
             // .AddSorting()
-            .ModifyRequestOptions((_, options) =>
-            {
-                options.IncludeExceptionDetails = true;
-                options.Complexity.Enable = true;
-                options.Complexity.ApplyDefaults = true;
-
-                options.Complexity.Calculation = context =>
-                {
-                    int cost = context.Complexity + context.ChildComplexity;
-                    var message = $"Cost: {context.Selection.Name} {cost}";
-
-                    ServiceCollectionExtensionsGraphQl.logger.LogInformation("{message}", message);
-
-                    return cost;
-                };
-            })
-            .SetPagingOptions(new PagingOptions
-            {
-                MaxPageSize = 1000,
-            })
-            .AddDiagnosticEventListener(provider =>
-                new QueryLoggerDiagnosticEventListener(
-                    ActivatorUtilities.GetServiceOrCreateInstance<ILogger<QueryLoggerDiagnosticEventListener>>(provider)))
+            .ModifyRequestOptions(ConfigureRequestOptions())
+            .SetPagingOptions(ConfigurePagingOptions())
+            .AddDiagnosticEventListener(ConfigureDiagnosticEventListener())
             .AddErrorFilters();
 
         builder.AddInstrumentation(ConfigureInstrumentationOptions);
@@ -56,7 +33,51 @@ internal static class ServiceCollectionExtensionsGraphQl
         return serviceCollection;
     }
 
-    private static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder)
+    private static Action<ISchemaOptions> ConfigureSchemaOptions()
+    {
+        return options =>
+        {
+            options.SortFieldsByName = true;
+            options.EnableFlagEnums = true;
+        };
+    }
+
+    private static Action<IServiceProvider, RequestExecutorOptions> ConfigureRequestOptions()
+    {
+        return (_, options) =>
+        {
+            options.IncludeExceptionDetails = true;
+            options.Complexity.Enable = true;
+            options.Complexity.ApplyDefaults = true;
+
+            options.Complexity.Calculation = context =>
+            {
+                int cost = context.Complexity + context.ChildComplexity;
+                var message = $"Cost: {context.Selection.Name} {cost}";
+
+                ServiceCollectionExtensionsGraphQl.logger.LogInformation("{message}", message);
+
+                return cost;
+            };
+        };
+    }
+
+    private static PagingOptions ConfigurePagingOptions()
+    {
+        return new PagingOptions
+        {
+            MaxPageSize = 1000,
+        };
+    }
+
+    private static Func<IServiceProvider, QueryLoggerDiagnosticEventListener> ConfigureDiagnosticEventListener()
+    {
+        return provider =>
+            new QueryLoggerDiagnosticEventListener(
+                ActivatorUtilities.GetServiceOrCreateInstance<ILogger<QueryLoggerDiagnosticEventListener>>(provider));
+    }
+
+    internal static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder)
     {
         return builder
             .AddQueryType(descriptor => descriptor.Name(OperationTypeNames.Query))
