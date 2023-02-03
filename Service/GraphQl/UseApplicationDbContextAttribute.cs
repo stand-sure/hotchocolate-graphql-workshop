@@ -1,4 +1,4 @@
-namespace ConferencePlanner.Service;
+namespace ConferencePlanner.Service.GraphQl;
 
 using System.Reflection;
 

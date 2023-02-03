@@ -7,13 +7,8 @@ using System.Linq.Expressions;
 using ConferencePlanner.Data;
 using ConferencePlanner.Models;
 
-using FluentAssertions;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Configuration;
-
-using Moq;
 
 using Xunit;
 using Xunit.Categories;

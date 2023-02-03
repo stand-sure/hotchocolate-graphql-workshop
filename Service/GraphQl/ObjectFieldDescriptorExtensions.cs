@@ -1,9 +1,10 @@
-namespace ConferencePlanner.Service;
+namespace ConferencePlanner.Service.GraphQl;
 
 using Microsoft.EntityFrameworkCore;
 
 public static class ObjectFieldDescriptorExtensions
 {
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static IObjectFieldDescriptor UseDbContext<TDbContext>(
         this IObjectFieldDescriptor descriptor)
         where TDbContext : DbContext

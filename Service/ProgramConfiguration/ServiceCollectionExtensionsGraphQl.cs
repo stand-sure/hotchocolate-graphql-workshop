@@ -1,16 +1,18 @@
-namespace ConferencePlanner.Service;
+namespace ConferencePlanner.Service.ProgramConfiguration;
 
+using ConferencePlanner.Service.GraphQl;
 using ConferencePlanner.Service.Speaker;
 
 using HotChocolate.Diagnostics;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Types.Pagination;
 
-public static class GraphQlStartupExtensions
+internal static class ServiceCollectionExtensionsGraphQl
 {
     private static ILogger logger = null!;
 
-    public static IServiceCollection ConfigureGraphServices(this IServiceCollection serviceCollection, IWebHostEnvironment? environment)
+    // ReSharper disable once UnusedMethodReturnValue.Global
+    public static IServiceCollection AddGraphQl(this IServiceCollection serviceCollection)
     {
         MakeLogger(serviceCollection);
 
@@ -35,7 +37,7 @@ public static class GraphQlStartupExtensions
                     int cost = context.Complexity + context.ChildComplexity;
                     var message = $"Cost: {context.Selection.Name} {cost}";
 
-                    GraphQlStartupExtensions.logger.LogInformation("{message}", message);
+                    ServiceCollectionExtensionsGraphQl.logger.LogInformation("{message}", message);
 
                     return cost;
                 };
@@ -54,7 +56,7 @@ public static class GraphQlStartupExtensions
         return serviceCollection;
     }
 
-    internal static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder)
+    private static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder)
     {
         return builder
             .AddQueryType(descriptor => descriptor.Name(OperationTypeNames.Query))
@@ -74,7 +76,7 @@ public static class GraphQlStartupExtensions
     {
         IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
         var factory = ActivatorUtilities.GetServiceOrCreateInstance<ILoggerFactory>(serviceProvider);
-        GraphQlStartupExtensions.logger = factory.CreateLogger("GraphQL");
+        ServiceCollectionExtensionsGraphQl.logger = factory.CreateLogger("GraphQL");
     }
 
     private static IRequestExecutorBuilder AddErrorFilters(this IRequestExecutorBuilder builder)

@@ -1,11 +1,9 @@
-ConferencePlanner.Service.ExceptionMessageErrorFilter
-ConferencePlanner.Service.ExceptionMessageErrorFilter.ExceptionMessageErrorFilter() -> void
-ConferencePlanner.Service.ExceptionMessageErrorFilter.OnError(HotChocolate.IError! error) -> HotChocolate.IError!
-ConferencePlanner.Service.GraphQlStartupExtensions
+ConferencePlanner.Service.GraphQl.ExceptionMessageErrorFilter
+ConferencePlanner.Service.GraphQl.ExceptionMessageErrorFilter.ExceptionMessageErrorFilter() -> void
+ConferencePlanner.Service.GraphQl.ExceptionMessageErrorFilter.OnError(HotChocolate.IError! error) -> HotChocolate.IError!
+ConferencePlanner.Service.GraphQl.ObjectFieldDescriptorExtensions
 ConferencePlanner.Service.Migrations.Speakers
-ConferencePlanner.Service.ObjectFieldDescriptorExtensions
 ConferencePlanner.Service.Speaker.SpeakerQueries
 ConferencePlanner.Service.Speaker.SpeakerQueries.GetSpeakers(ConferencePlanner.Data.ApplicationDbContext! context) -> System.Linq.IQueryable<ConferencePlanner.Models.Speaker!>!
 ConferencePlanner.Service.Speaker.SpeakerQueries.SpeakerQueries() -> void
-static ConferencePlanner.Service.GraphQlStartupExtensions.ConfigureGraphServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! serviceCollection, Microsoft.AspNetCore.Hosting.IWebHostEnvironment? environment) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static ConferencePlanner.Service.ObjectFieldDescriptorExtensions.UseDbContext<TDbContext>(this HotChocolate.Types.IObjectFieldDescriptor! descriptor) -> HotChocolate.Types.IObjectFieldDescriptor!
+static ConferencePlanner.Service.GraphQl.ObjectFieldDescriptorExtensions.UseDbContext<TDbContext>(this HotChocolate.Types.IObjectFieldDescriptor! descriptor) -> HotChocolate.Types.IObjectFieldDescriptor!

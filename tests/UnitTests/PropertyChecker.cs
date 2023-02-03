@@ -80,6 +80,7 @@ internal static class PropertyChecker
             isNullable = true;
         }
 
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         values ??= Type.GetTypeCode(type) switch
         {
             TypeCode.Boolean => new[] { false, true }.Cast<T>(),
@@ -150,6 +151,7 @@ internal static class PropertyChecker
     /// <param name="expression">The property access expression.</param>
     /// <param name="readOnly">If <c>true</c>, then the property is not writable. Default is that properties are read-write.</param>
     /// <param name="expectedDefaultValue">The expected value from when the property is not explicitly set.</param>
+    /// <param name="testDefaultEquivalence">Set to true if testing equivalence is needed (edge case).</param>
     public static void CheckProperty<T>(
         Expression<Func<object?>> expression,
         bool? readOnly = null,

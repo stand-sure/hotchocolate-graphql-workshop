@@ -1,5 +1,8 @@
-namespace ConferencePlanner.Service;
+namespace ConferencePlanner.Service.GraphQl;
 
+using JetBrains.Annotations;
+
+[UsedImplicitly]
 public class ExceptionMessageErrorFilter : IErrorFilter
 {
     /// <inheritdoc />

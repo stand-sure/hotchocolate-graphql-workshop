@@ -81,7 +81,7 @@ internal class QueryLoggerDiagnosticEventListener : ExecutionDiagnosticEventList
 
             builder.AppendLine($"Elapsed time: {this.queryTimer.Elapsed.TotalMilliseconds} ms");
 
-            this.Logger.LogInformation(builder.ToString());
+            this.Logger.LogInformation("{message}", builder.ToString());
         }
 
         private IRequestContext Context { get; }

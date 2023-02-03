@@ -6,8 +6,8 @@ using System.Linq;
 
 using ConferencePlanner.Data;
 using ConferencePlanner.Models;
+using ConferencePlanner.Service.GraphQl;
 
-using HotChocolate;
 using HotChocolate.Types;
 
 using JetBrains.Annotations;

@@ -3,7 +3,6 @@ namespace ConferencePlanner.Data;
 using ConferencePlanner.Models;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 public class ApplicationDbContext : DbContext
 {
@@ -17,5 +16,5 @@ public class ApplicationDbContext : DbContext
     /// <summary>
     /// Gets or sets the Speakers.
     /// </summary>
-    public DbSet<Speaker> Speakers { get; set; }
+    public DbSet<Speaker> Speakers { get; set; } = null!;
 }

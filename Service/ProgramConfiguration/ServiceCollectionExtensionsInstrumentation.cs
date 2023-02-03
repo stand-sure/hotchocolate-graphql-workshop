@@ -1,4 +1,4 @@
-namespace ConferencePlanner.Service;
+namespace ConferencePlanner.Service.ProgramConfiguration;
 
 #nullable enable
 using System.Reflection;
@@ -8,7 +8,7 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-internal static class InstrumentationExtensions
+internal static class ServiceCollectionExtensionsInstrumentation
 {
     public static void AddInstrumentation(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
     {
