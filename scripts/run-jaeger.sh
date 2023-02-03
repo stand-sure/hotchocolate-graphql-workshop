@@ -1,4 +1,11 @@
 #! /bin/bash
+read -p "Stop existing? (y/N) " stopExisting
+if [ $stopExisting = 'y' ]
+then
+  nerdctl stop jaeger
+  nerdctl rm jaeger
+fi
+
 nerdctl run -d --name jaeger \
           -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
           -e COLLECTOR_OTLP_ENABLED=true \
@@ -13,3 +20,5 @@ nerdctl run -d --name jaeger \
           -p 14269:14269 \
           -p 9411:9411 \
           jaegertracing/all-in-one:1.41
+          
+open http://localhost:16686
