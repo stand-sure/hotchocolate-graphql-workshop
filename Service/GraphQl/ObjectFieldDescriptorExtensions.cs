@@ -14,7 +14,7 @@ public static class ObjectFieldDescriptorExtensions
             disposeAsync: DisposeDbContextAsync);
     }
 
-    private static ValueTask DisposeDbContextAsync<TDbContext>(IServiceProvider serviceProvider, TDbContext dbContext) where TDbContext : DbContext
+    internal static ValueTask DisposeDbContextAsync<TDbContext>(IServiceProvider serviceProvider, TDbContext dbContext) where TDbContext : DbContext
     {
         return ValueTask.CompletedTask;
     }

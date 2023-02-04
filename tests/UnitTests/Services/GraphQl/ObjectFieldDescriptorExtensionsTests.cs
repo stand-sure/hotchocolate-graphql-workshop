@@ -8,6 +8,9 @@ using FluentAssertions;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
 using Moq;
 
 using Xunit.Abstractions;
@@ -49,5 +52,22 @@ public class ObjectFieldDescriptorExtensionsTests
         var typeArgs = middlewareTargetArgList.SelectMany(types => types.Select(type => type));
 
         typeArgs.Should().Contain(typeof(ApplicationDbContext));
+    }
+
+    [Fact]
+    public void DisposeDbContextAsyncShouldReturnCompletedTask()
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+        optionsBuilder.UseInMemoryDatabase("conference");
+
+        DbContextOptions<ApplicationDbContext> options = optionsBuilder.Options;
+
+        var context = new ApplicationDbContext(options);
+
+        IServiceProvider serviceProvider = new ServiceCollection().BuildServiceProvider();
+
+        ValueTask result = ObjectFieldDescriptorExtensions.DisposeDbContextAsync(serviceProvider, context);
+
+        result.Should().Be(ValueTask.CompletedTask);
     }
 }
