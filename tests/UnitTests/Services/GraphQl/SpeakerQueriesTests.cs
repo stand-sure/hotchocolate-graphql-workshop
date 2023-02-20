@@ -5,11 +5,14 @@ using System.Text.Json;
 using AutoFixture;
 
 using ConferencePlanner.Models;
+using ConferencePlanner.Service.Speaker;
 
 using FluentAssertions;
 
 using Xunit.Abstractions;
+using Xunit.Categories;
 
+[UnitTest(nameof(SpeakerQueries))]
 public class SpeakerQueriesTests : QueryTestsBase
 {
     private readonly ITestOutputHelper outputHelper;
@@ -28,13 +31,7 @@ public class SpeakerQueriesTests : QueryTestsBase
     [Fact]
     public async Task GetSpeakersShouldReturnCorrectData()
     {
-        var speaker = new Speaker
-        {
-            Id = this.fixture.Create<int>(),
-            Bio = this.fixture.Create<string>(),
-            Name = this.fixture.Create<string>(),
-            Website = this.fixture.Create<string>(),
-        };
+        var speaker = this.fixture.Create<Speaker>();
 
         this.ApplicationDbContext.Speakers.Add(speaker);
         await this.ApplicationDbContext.SaveChangesAsync().ConfigureAwait(false);
@@ -51,6 +48,15 @@ public class SpeakerQueriesTests : QueryTestsBase
 
         this.outputHelper.WriteLine($"Actual {JsonSerializer.Serialize(actual)}");
 
-        actual.Should().BeEquivalentTo(speaker);
+        actual.Should().BeEquivalentTo(speaker,
+            options =>
+            {
+                options.Including(s => s.Id);
+                options.Including(s => s.Bio);
+                options.Including(s => s.Website);
+                options.Including(s => s.Name);
+
+                return options;
+            });
     }
 }

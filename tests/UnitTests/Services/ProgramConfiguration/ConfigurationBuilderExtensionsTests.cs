@@ -10,7 +10,9 @@ using Microsoft.Extensions.Configuration.Json;
 using Moq;
 
 using Xunit.Abstractions;
+using Xunit.Categories;
 
+[UnitTest(nameof(ConfigurationExtensions))]
 public class ConfigurationBuilderExtensionsTests
 {
     private readonly ITestOutputHelper testOutputHelper;
