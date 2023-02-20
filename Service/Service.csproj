@@ -4,6 +4,9 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Company>Stand Sure</Company>
+        <Product>ConferencePlannerService</Product>
+        <AssemblyName>ConferencePlannerService</AssemblyName>
     </PropertyGroup>
 
     <PropertyGroup>

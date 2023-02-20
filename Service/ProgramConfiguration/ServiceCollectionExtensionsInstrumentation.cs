@@ -18,32 +18,42 @@ internal static class ServiceCollectionExtensionsInstrumentation
 
         services.AddOpenTelemetry().WithTracing(providerBuilder =>
         {
-            providerBuilder.AddSource(serviceName).SetResourceBuilder(resourceBuilder);
-            providerBuilder.AddHttpClientInstrumentation();
-            providerBuilder.AddAspNetCoreInstrumentation();
-            providerBuilder.AddHotChocolateInstrumentation();
-
-            providerBuilder.AddEntityFrameworkCoreInstrumentation(options => { options.SetDbStatementForText = true; });
-
-            providerBuilder.AddJaegerExporter(options =>
-            {
-                string? endpointUriAddress = configuration["JaegerExporter:EndpointUri"];
-
-                bool goodUri = Uri.TryCreate(endpointUriAddress, UriKind.Absolute, out Uri? endPointUri);
-
-                if (goodUri is false)
-                {
-                    return;
-                }
-
-                options.Endpoint = endPointUri;
-                options.Protocol = JaegerExportProtocol.HttpBinaryThrift;
-            });
-
-            if (environment.IsDevelopment())
-            {
-                providerBuilder.AddConsoleExporter(options => options.Targets = ConsoleExporterOutputTargets.Console);
-            }
+            providerBuilder.ConfigureTraceProvider(resourceBuilder, configuration, environment, serviceName);
         }).StartWithHost();
+    }
+
+    public static void ConfigureTraceProvider(
+        this TracerProviderBuilder providerBuilder,
+        ResourceBuilder resourceBuilder,
+        IConfiguration configuration,
+        IWebHostEnvironment environment,
+        string serviceName)
+    {
+        providerBuilder.AddSource(serviceName).SetResourceBuilder(resourceBuilder);
+        providerBuilder.AddHttpClientInstrumentation();
+        providerBuilder.AddAspNetCoreInstrumentation();
+        providerBuilder.AddHotChocolateInstrumentation();
+
+        providerBuilder.AddEntityFrameworkCoreInstrumentation(options => { options.SetDbStatementForText = true; });
+
+        providerBuilder.AddJaegerExporter(options =>
+        {
+            string? endpointUriAddress = configuration["JaegerExporter:EndpointUri"];
+
+            bool goodUri = Uri.TryCreate(endpointUriAddress, UriKind.Absolute, out Uri? endPointUri);
+
+            if (goodUri is false)
+            {
+                return;
+            }
+
+            options.Endpoint = endPointUri;
+            options.Protocol = JaegerExportProtocol.HttpBinaryThrift;
+        });
+
+        if (environment.IsDevelopment())
+        {
+            providerBuilder.AddConsoleExporter(options => options.Targets = ConsoleExporterOutputTargets.Console);
+        }
     }
 }
