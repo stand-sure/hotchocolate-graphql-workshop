@@ -29,6 +29,23 @@ public class ObjectFieldDescriptorExtensionsTests
     }
 
     [Fact]
+    public void DisposeDbContextAsyncShouldReturnCompletedTask()
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+        optionsBuilder.UseInMemoryDatabase("conference");
+
+        DbContextOptions<ApplicationDbContext> options = optionsBuilder.Options;
+
+        var context = new ApplicationDbContext(options);
+
+        IServiceProvider serviceProvider = new ServiceCollection().BuildServiceProvider();
+
+        ValueTask result = ObjectFieldDescriptorExtensions.DisposeDbContextAsync(serviceProvider, context);
+
+        result.Should().Be(ValueTask.CompletedTask);
+    }
+
+    [Fact]
     public void UseDbContextShouldCallUseScopedService()
     {
         var descriptor = Mock.Of<IObjectFieldDescriptor>();
@@ -49,25 +66,8 @@ public class ObjectFieldDescriptorExtensionsTests
 
         descriptor.UseDbContext<ApplicationDbContext>();
 
-        var typeArgs = middlewareTargetArgList.SelectMany(types => types.Select(type => type));
+        IEnumerable<Type> typeArgs = middlewareTargetArgList.SelectMany(types => types.Select(type => type));
 
         typeArgs.Should().Contain(typeof(ApplicationDbContext));
-    }
-
-    [Fact]
-    public void DisposeDbContextAsyncShouldReturnCompletedTask()
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseInMemoryDatabase("conference");
-
-        DbContextOptions<ApplicationDbContext> options = optionsBuilder.Options;
-
-        var context = new ApplicationDbContext(options);
-
-        IServiceProvider serviceProvider = new ServiceCollection().BuildServiceProvider();
-
-        ValueTask result = ObjectFieldDescriptorExtensions.DisposeDbContextAsync(serviceProvider, context);
-
-        result.Should().Be(ValueTask.CompletedTask);
     }
 }

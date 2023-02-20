@@ -7,14 +7,14 @@ using Microsoft.EntityFrameworkCore;
 public class ApplicationDbContext : DbContext
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ApplicationDbContext"/> class.
+    ///     Initializes a new instance of the <see cref="ApplicationDbContext" /> class.
     /// </summary>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
 
     /// <summary>
-    /// Gets or sets the Speakers.
+    ///     Gets or sets the Speakers.
     /// </summary>
     public DbSet<Speaker> Speakers { get; set; } = null!;
 }

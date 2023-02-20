@@ -2,10 +2,7 @@
 
 namespace UnitTests;
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -16,6 +13,26 @@ using JetBrains.Annotations;
 [PublicAPI]
 internal static class PropertyChecker
 {
+    public static TAttribute CheckAttribute<TAttribute>(Expression<Func<object?>> expression) where TAttribute : Attribute
+    {
+        if (expression.Body is not UnaryExpression { Operand: MemberExpression memberExpression })
+        {
+            if (expression.Body is not MemberExpression tmp)
+            {
+                throw new InvalidOperationException($"Expected a {nameof(MemberExpression)}.");
+            }
+
+            memberExpression = tmp;
+        }
+
+        var property = (PropertyInfo)memberExpression.Member;
+
+        var attribute = property.GetCustomAttribute<TAttribute>();
+        attribute.Should().NotBeNull();
+
+        return attribute!;
+    }
+
     /// <summary>
     ///     Checks a property for invariance (the value gotten is the same as the one set).
     /// </summary>
@@ -60,9 +77,10 @@ internal static class PropertyChecker
     /// <param name="values">The values to use for testing.</param>
     /// <remarks>
     ///     For built-in value types, the <paramref name="values" /> can be omitted if min, max, zero are acceptable.
-    ///     <seealso cref="Nullable{T}"/> is supported.
-    ///     <seealso cref="Guid"/> is supported.
-    ///     <seealso cref="string"/> is tested with null, whitespace, aGUID, and a 100-character. Do not use this method if truncation is important.
+    ///     <seealso cref="Nullable{T}" /> is supported.
+    ///     <seealso cref="Guid" /> is supported.
+    ///     <seealso cref="string" /> is tested with null, whitespace, aGUID, and a 100-character. Do not use this method if
+    ///     truncation is important.
     /// </remarks>
     public static void CheckInvariance<T>(Expression<Func<T>> expression, IEnumerable<T>? values = null)
     {
@@ -120,32 +138,31 @@ internal static class PropertyChecker
             ConstantExpression constantExpression = Expression.Constant(value, typeof(T));
             BinaryExpression binaryExpression = Expression.Equal(memberExpression, constantExpression);
             Expression<Func<bool>> lambda = Expression.Lambda<Func<bool>>(binaryExpression);
-            PropertyChecker.CheckInvariance(lambda);
+            CheckInvariance(lambda);
         }
     }
 
-    private static IEnumerable<object?> GetInvarianceTestValues(Type? type)
+    public static void CheckMaxLength(Expression<Func<object>> expression, int maxLength)
     {
-        IEnumerable<object?> retVal;
+        if (expression.Body is not UnaryExpression { Operand: MemberExpression memberExpression })
+        {
+            if (expression.Body is not MemberExpression tmp)
+            {
+                throw new InvalidOperationException($"Expected a {nameof(MemberExpression)}.");
+            }
 
-        if (type == typeof(Guid))
-        {
-            retVal = new object?[] { Guid.Empty, Guid.NewGuid() };
-        }
-        else if (type == typeof(DateTimeOffset))
-        {
-            retVal = new object?[] { DateTimeOffset.MinValue, default(DateTimeOffset), DateTimeOffset.MaxValue };
-        }
-        else
-        {
-            retVal = new object?[] { null };
+            memberExpression = tmp;
         }
 
-        return retVal;
+        var property = (PropertyInfo)memberExpression.Member;
+
+        var attribute = property.GetCustomAttribute<MaxLengthAttribute>();
+        attribute.Should().NotBeNull();
+        attribute!.Length.Should().Be(maxLength);
     }
 
     /// <summary>
-    /// Checks that a property has the correct characteristics: read/write, return type, default value.
+    ///     Checks that a property has the correct characteristics: read/write, return type, default value.
     /// </summary>
     /// <typeparam name="T">The EXPECTED type of the property.</typeparam>
     /// <param name="expression">The property access expression.</param>
@@ -185,7 +202,7 @@ internal static class PropertyChecker
         LambdaExpression lambda = Expression.Lambda<Func<T>>(convert);
         Delegate compile = lambda.Compile();
         object? actualDefault = compile.DynamicInvoke();
-        expectedDefaultValue ??= PropertyChecker.GetDefault(typeof(T));
+        expectedDefaultValue ??= GetDefault(typeof(T));
 
         if (testDefaultEquivalence)
         {
@@ -195,44 +212,6 @@ internal static class PropertyChecker
         {
             actualDefault.Should().Be(expectedDefaultValue);
         }
-    }
-
-    public static void CheckRequired(Expression<Func<object>> expression, bool allowEmptyStrings = false)
-    {
-        if (expression.Body is not UnaryExpression { Operand: MemberExpression memberExpression })
-        {
-            if (expression.Body is not MemberExpression tmp)
-            {
-                throw new InvalidOperationException($"Expected a {nameof(MemberExpression)}.");
-            }
-
-            memberExpression = tmp;
-        }
-
-        var property = (PropertyInfo)memberExpression.Member;
-
-        var attribute = property.GetCustomAttribute<RequiredAttribute>();
-        attribute.Should().NotBeNull();
-        attribute!.AllowEmptyStrings.Should().Be(allowEmptyStrings);
-    }
-
-    public static void CheckMaxLength(Expression<Func<object>> expression, int maxLength)
-    {
-        if (expression.Body is not UnaryExpression { Operand: MemberExpression memberExpression })
-        {
-            if (expression.Body is not MemberExpression tmp)
-            {
-                throw new InvalidOperationException($"Expected a {nameof(MemberExpression)}.");
-            }
-
-            memberExpression = tmp;
-        }
-
-        var property = (PropertyInfo)memberExpression.Member;
-
-        var attribute = property.GetCustomAttribute<MaxLengthAttribute>();
-        attribute.Should().NotBeNull();
-        attribute!.Length.Should().Be(maxLength);
     }
 
     public static void CheckRange<TValue>(Expression<Func<object>> expression, TValue minValue, TValue maxValue)
@@ -255,7 +234,7 @@ internal static class PropertyChecker
         attribute.Maximum.Should().Be(maxValue);
     }
 
-    public static TAttribute CheckAttribute<TAttribute>(Expression<Func<object?>> expression) where TAttribute : Attribute
+    public static void CheckRequired(Expression<Func<object>> expression, bool allowEmptyStrings = false)
     {
         if (expression.Body is not UnaryExpression { Operand: MemberExpression memberExpression })
         {
@@ -269,14 +248,33 @@ internal static class PropertyChecker
 
         var property = (PropertyInfo)memberExpression.Member;
 
-        var attribute = property.GetCustomAttribute<TAttribute>();
+        var attribute = property.GetCustomAttribute<RequiredAttribute>();
         attribute.Should().NotBeNull();
-
-        return attribute!;
+        attribute!.AllowEmptyStrings.Should().Be(allowEmptyStrings);
     }
 
     private static object? GetDefault(Type t)
     {
         return t.IsValueType ? Activator.CreateInstance(t) : null;
+    }
+
+    private static IEnumerable<object?> GetInvarianceTestValues(Type? type)
+    {
+        IEnumerable<object?> retVal;
+
+        if (type == typeof(Guid))
+        {
+            retVal = new object?[] { Guid.Empty, Guid.NewGuid() };
+        }
+        else if (type == typeof(DateTimeOffset))
+        {
+            retVal = new object?[] { DateTimeOffset.MinValue, default(DateTimeOffset), DateTimeOffset.MaxValue };
+        }
+        else
+        {
+            retVal = new object?[] { null };
+        }
+
+        return retVal;
     }
 }

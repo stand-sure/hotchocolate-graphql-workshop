@@ -20,12 +20,13 @@ using Xunit.Categories;
 [UnitTest(nameof(ServiceCollectionExtensionsGraphQl))]
 public class ServiceCollectionExtensionsGraphQlTests
 {
-    // ReSharper disable once NotAccessedField.Local
-    private readonly ITestOutputHelper testOutputHelper;
     private readonly ISchema schema;
 
+    // ReSharper disable once NotAccessedField.Local
+    private readonly ITestOutputHelper testOutputHelper;
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="ServiceCollectionExtensionsGraphQlTests"/> class.
+    ///     Initializes a new instance of the <see cref="ServiceCollectionExtensionsGraphQlTests" /> class.
     /// </summary>
     public ServiceCollectionExtensionsGraphQlTests(ITestOutputHelper testOutputHelper)
     {

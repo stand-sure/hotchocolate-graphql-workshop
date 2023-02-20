@@ -12,44 +12,17 @@ using Xunit.Categories;
 public class SpeakerTests
 {
     /// <summary>
-    /// Gets or sets the Target.
-    /// </summary>
-    private Speaker Target { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SpeakerTests"/> class.
+    ///     Initializes a new instance of the <see cref="SpeakerTests" /> class.
     /// </summary>
     public SpeakerTests()
     {
         this.Target = new Speaker();
     }
 
-    [Fact]
-    public void IdShouldBeWellBehaved()
-    {
-        PropertyChecker.CheckProperty<int>(() => this.Target.Id);
-        PropertyChecker.CheckInvariance(() => this.Target.Id);
-    }
-
-    [Fact]
-    public void NameShouldBeWellBehaved()
-    {
-        PropertyChecker.CheckProperty<string?>(() => this.Target.Name);
-        PropertyChecker.CheckInvariance(() => this.Target.Name);
-    }
-
-    [Fact]
-    public void NameShouldBeRequired()
-    {
-        PropertyChecker.CheckAttribute<RequiredAttribute>(() => this.Target.Name);
-    }
-
-    [Fact]
-    public void NameShouldHaveMaxLength200()
-    {
-        var a = PropertyChecker.CheckAttribute<StringLengthAttribute>(() => this.Target.Name);
-        a.MaximumLength.Should().Be(200);
-    }
+    /// <summary>
+    ///     Gets or sets the Target.
+    /// </summary>
+    private Speaker Target { get; }
 
     [Fact]
     public void BioShouldBeWellBehaved()
@@ -70,6 +43,33 @@ public class SpeakerTests
     {
         PropertyChecker.CheckProperty<string>(() => this.Target.Website);
         PropertyChecker.CheckInvariance(() => this.Target.Website);
+    }
+
+    [Fact]
+    public void IdShouldBeWellBehaved()
+    {
+        PropertyChecker.CheckProperty<int>(() => this.Target.Id);
+        PropertyChecker.CheckInvariance(() => this.Target.Id);
+    }
+
+    [Fact]
+    public void NameShouldBeRequired()
+    {
+        PropertyChecker.CheckAttribute<RequiredAttribute>(() => this.Target.Name);
+    }
+
+    [Fact]
+    public void NameShouldBeWellBehaved()
+    {
+        PropertyChecker.CheckProperty<string?>(() => this.Target.Name);
+        PropertyChecker.CheckInvariance(() => this.Target.Name);
+    }
+
+    [Fact]
+    public void NameShouldHaveMaxLength200()
+    {
+        var a = PropertyChecker.CheckAttribute<StringLengthAttribute>(() => this.Target.Name);
+        a.MaximumLength.Should().Be(200);
     }
 
     [Fact]

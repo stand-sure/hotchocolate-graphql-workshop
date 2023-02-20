@@ -1,15 +1,10 @@
 namespace ConferencePlanner.Service;
 
-using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 
 using HotChocolate.Execution;
 using HotChocolate.Execution.Instrumentation;
-using HotChocolate.Types;
-
-using Microsoft.Extensions.Logging;
 
 internal class QueryLoggerDiagnosticEventListener : ExecutionDiagnosticEventListener
 {

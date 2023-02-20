@@ -14,7 +14,16 @@ internal static class ServiceCollectionExtensions
                 contextOptionsBuilder => contextOptionsBuilder.MigrationsAssembly("Service"));
         });
 
-        services.AddGraphQl();
         services.AddInstrumentation(environment, configuration);
+        services.ConfigureGraphServices(environment);
+    }
+
+    public static IServiceCollection ConfigureGraphServices(
+        this IServiceCollection services,
+        IWebHostEnvironment? environment = null)
+    {
+        services.AddGraphQl();
+
+        return services;
     }
 }

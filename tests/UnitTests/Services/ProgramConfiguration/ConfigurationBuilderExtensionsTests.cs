@@ -16,7 +16,7 @@ public class ConfigurationBuilderExtensionsTests
     private readonly ITestOutputHelper testOutputHelper;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConfigurationBuilderExtensionsTests"/> class.
+    ///     Initializes a new instance of the <see cref="ConfigurationBuilderExtensionsTests" /> class.
     /// </summary>
     public ConfigurationBuilderExtensionsTests(ITestOutputHelper testOutputHelper)
     {
@@ -28,19 +28,19 @@ public class ConfigurationBuilderExtensionsTests
     {
         var sources = new List<IConfigurationSource>();
 
-        IConfigurationBuilder builder = Mock.Of<IConfigurationBuilder>(MockBehavior.Strict);
+        var builder = Mock.Of<IConfigurationBuilder>(MockBehavior.Strict);
 
         Mock.Get(builder)
             .Setup(b =>
                 b.Add(It.IsAny<IConfigurationSource>()))
-            .Callback<IConfigurationSource>((source) => { sources.Add(source); })
-            .Returns<IConfigurationSource>((_) => builder);
+            .Callback<IConfigurationSource>(source => { sources.Add(source); })
+            .Returns<IConfigurationSource>(_ => builder);
 
         builder.ConfigureConfiguration();
 
         this.testOutputHelper.WriteLine($"{sources}");
 
-        var jsonSources = sources.Where(source => source is JsonConfigurationSource).Cast<JsonConfigurationSource>();
+        IEnumerable<JsonConfigurationSource> jsonSources = sources.Where(source => source is JsonConfigurationSource).Cast<JsonConfigurationSource>();
 
         jsonSources.Should().Contain(source => source.Path == "appsettings.json");
     }

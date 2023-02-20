@@ -1,14 +1,8 @@
-
-
 namespace ConferencePlanner.Service.Speaker;
-
-using System.Linq;
 
 using ConferencePlanner.Data;
 using ConferencePlanner.Models;
 using ConferencePlanner.Service.GraphQl;
-
-using HotChocolate.Types;
 
 using JetBrains.Annotations;
 

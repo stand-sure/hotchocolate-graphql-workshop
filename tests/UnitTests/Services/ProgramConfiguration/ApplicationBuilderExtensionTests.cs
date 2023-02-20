@@ -4,13 +4,9 @@ using ConferencePlanner.Service.ProgramConfiguration;
 
 using FluentAssertions;
 
-using HotChocolate.Execution;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-
-using Moq;
 
 using Xunit.Abstractions;
 using Xunit.Categories;
@@ -23,7 +19,7 @@ public class ApplicationBuilderExtensionTests
     private readonly ITestOutputHelper testOutputHelper;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ApplicationBuilderExtensionTests"/> class.
+    ///     Initializes a new instance of the <see cref="ApplicationBuilderExtensionTests" /> class.
     /// </summary>
     public ApplicationBuilderExtensionTests(ITestOutputHelper testOutputHelper)
     {
@@ -42,7 +38,7 @@ public class ApplicationBuilderExtensionTests
         var endpointDataSource = app.Services.GetRequiredService<EndpointDataSource>();
         endpointDataSource.Should().NotBeNull();
 
-        var names = endpointDataSource.Endpoints.Select(endpoint => endpoint.DisplayName).ToList();
+        List<string?> names = endpointDataSource.Endpoints.Select(endpoint => endpoint.DisplayName).ToList();
         this.testOutputHelper.WriteLine(string.Join(null, names));
         names.Should().BeEquivalentTo("Hot Chocolate GraphQL Pipeline");
     }

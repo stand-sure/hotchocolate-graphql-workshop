@@ -33,10 +33,49 @@ internal static class ServiceCollectionExtensionsGraphQl
         return serviceCollection;
     }
 
-    private static void ConfigureSchemaOptions(ISchemaOptions options)
+    internal static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder)
     {
-        options.SortFieldsByName = true;
-        options.EnableFlagEnums = true;
+        return builder
+            .AddQueryType(descriptor => descriptor.Name(OperationTypeNames.Query))
+            .AddTypeExtension<SpeakerQueries>();
+    }
+
+    private static IRequestExecutorBuilder AddErrorFilters(this IRequestExecutorBuilder builder)
+    {
+        return builder.AddErrorFilter<ExceptionMessageErrorFilter>();
+    }
+
+    private static int CalculateComplexity(ComplexityContext context)
+    {
+        int cost = context.Complexity + context.ChildComplexity;
+        var message = $"Cost: {context.Selection.Name} {cost}";
+
+        ServiceCollectionExtensionsGraphQl.logger.LogInformation("{message}", message);
+
+        return cost;
+    }
+
+    private static QueryLoggerDiagnosticEventListener ConfigureDiagnosticEventListener(IServiceProvider provider)
+    {
+        return new QueryLoggerDiagnosticEventListener(
+            ActivatorUtilities.GetServiceOrCreateInstance<ILogger<QueryLoggerDiagnosticEventListener>>(provider));
+    }
+
+    private static void ConfigureInstrumentationOptions(InstrumentationOptions options)
+    {
+        options.Scopes = ActivityScopes.All;
+        options.IncludeDataLoaderKeys = true;
+        options.IncludeDocument = true;
+        options.RenameRootActivity = true;
+        options.RequestDetails = RequestDetails.All;
+    }
+
+    private static PagingOptions ConfigurePagingOptions()
+    {
+        return new PagingOptions
+        {
+            MaxPageSize = 1000,
+        };
     }
 
     // ReSharper disable once UnusedParameter.Local
@@ -51,44 +90,10 @@ internal static class ServiceCollectionExtensionsGraphQl
         options.Complexity.Calculation = CalculateComplexity;
     }
 
-    private static int CalculateComplexity(ComplexityContext context)
+    private static void ConfigureSchemaOptions(ISchemaOptions options)
     {
-        int cost = context.Complexity + context.ChildComplexity;
-        var message = $"Cost: {context.Selection.Name} {cost}";
-
-        ServiceCollectionExtensionsGraphQl.logger.LogInformation("{message}", message);
-
-        return cost;
-    }
-
-    private static PagingOptions ConfigurePagingOptions()
-    {
-        return new PagingOptions
-        {
-            MaxPageSize = 1000,
-        };
-    }
-
-    private static QueryLoggerDiagnosticEventListener ConfigureDiagnosticEventListener(IServiceProvider provider)
-    {
-        return new QueryLoggerDiagnosticEventListener(
-            ActivatorUtilities.GetServiceOrCreateInstance<ILogger<QueryLoggerDiagnosticEventListener>>(provider));
-    }
-
-    internal static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder)
-    {
-        return builder
-            .AddQueryType(descriptor => descriptor.Name(OperationTypeNames.Query))
-            .AddTypeExtension<SpeakerQueries>();
-    }
-
-    private static void ConfigureInstrumentationOptions(InstrumentationOptions options)
-    {
-        options.Scopes = ActivityScopes.All;
-        options.IncludeDataLoaderKeys = true;
-        options.IncludeDocument = true;
-        options.RenameRootActivity = true;
-        options.RequestDetails = RequestDetails.All;
+        options.SortFieldsByName = true;
+        options.EnableFlagEnums = true;
     }
 
     private static void MakeLogger(IServiceCollection serviceCollection)
@@ -96,10 +101,5 @@ internal static class ServiceCollectionExtensionsGraphQl
         IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
         var factory = ActivatorUtilities.GetServiceOrCreateInstance<ILoggerFactory>(serviceProvider);
         ServiceCollectionExtensionsGraphQl.logger = factory.CreateLogger("GraphQL");
-    }
-
-    private static IRequestExecutorBuilder AddErrorFilters(this IRequestExecutorBuilder builder)
-    {
-        return builder.AddErrorFilter<ExceptionMessageErrorFilter>();
     }
 }
