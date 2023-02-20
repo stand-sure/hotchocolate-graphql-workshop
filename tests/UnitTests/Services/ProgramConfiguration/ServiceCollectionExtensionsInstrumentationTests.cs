@@ -1,5 +1,7 @@
 namespace UnitTests.Services.ProgramConfiguration;
 
+using System.Diagnostics;
+
 using ConferencePlanner.Service.ProgramConfiguration;
 
 using FluentAssertions;
@@ -11,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 
 using Moq;
 
+using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -52,6 +55,48 @@ public class ServiceCollectionExtensionsInstrumentationTests
         this.testOutputHelper.WriteLine($"{string.Join(null, services.Select(s => s.GetType().Name))}");
 
         services.Should().Contain(service => service.GetType().Name == "TelemetryHostedService");
+    }
+
+    [Fact]
+    public void AddInstrumentationShouldAddHttpClientInstrumentation()
+    {
+        this.serviceCollection.AddInstrumentation(this.environment, this.configuration);
+
+        var tracerProvider = this.serviceCollection.BuildServiceProvider().GetService<TracerProvider>();
+
+        var instrumentationList = tracerProvider.GetType()
+            .GetProperty("Instrumentations", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            .GetValue((tracerProvider)) as List<object?>;
+
+        instrumentationList.Should().Contain(o => o.GetType().Name == "HttpClientInstrumentation");
+    }
+
+    [Fact]
+    public void AddInstrumentationShouldAddAspNetCoreInstrumentation()
+    {
+        this.serviceCollection.AddInstrumentation(this.environment, this.configuration);
+
+        var tracerProvider = this.serviceCollection.BuildServiceProvider().GetService<TracerProvider>();
+
+        var instrumentationList = tracerProvider.GetType()
+            .GetProperty("Instrumentations", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            .GetValue((tracerProvider)) as List<object?>;
+
+        instrumentationList.Should().Contain(o => o.GetType().Name == "AspNetCoreInstrumentation");
+    }
+
+    [Fact]
+    public void AddInstrumentationShouldAddEntityFrameworkInstrumentation()
+    {
+        this.serviceCollection.AddInstrumentation(this.environment, this.configuration);
+
+        var tracerProvider = this.serviceCollection.BuildServiceProvider().GetService<TracerProvider>();
+
+        var instrumentationList = tracerProvider.GetType()
+            .GetProperty("Instrumentations", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            .GetValue((tracerProvider)) as List<object?>;
+
+        instrumentationList.Should().Contain(o => o.GetType().Name == "EntityFrameworkInstrumentation");
     }
 
     [Fact]
