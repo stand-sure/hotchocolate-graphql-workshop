@@ -6,14 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 internal static class ServiceCollectionExtensions
 {
+    private const string ConnectionStringName = "ConferencePlanner";
+    private const string MigrationsAssemblyName = "Service";
+
     public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-        services.AddDbContextFactory<ApplicationDbContext>((_, builder) =>
-        {
-            builder.UseNpgsql(configuration.GetConnectionString("ConferencePlanner"),
-                contextOptionsBuilder => contextOptionsBuilder.MigrationsAssembly("Service"));
-        });
-
+        services.AddDbContextFactory<ApplicationDbContext>((_, builder) => builder.ConfigureDbContextFactory(configuration));
         services.AddInstrumentation(environment, configuration);
         services.ConfigureGraphServices(environment);
     }
@@ -25,5 +23,13 @@ internal static class ServiceCollectionExtensions
         services.AddGraphQl();
 
         return services;
+    }
+
+    public static DbContextOptionsBuilder ConfigureDbContextFactory(this DbContextOptionsBuilder builder, IConfiguration configuration)
+    {
+        builder.UseNpgsql(configuration.GetConnectionString(ServiceCollectionExtensions.ConnectionStringName),
+            contextOptionsBuilder => contextOptionsBuilder.MigrationsAssembly(ServiceCollectionExtensions.MigrationsAssemblyName));
+
+        return builder;
     }
 }
