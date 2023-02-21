@@ -253,6 +253,29 @@ internal static class PropertyChecker
         attribute!.AllowEmptyStrings.Should().Be(allowEmptyStrings);
     }
 
+    public static void CheckInitOnly(Expression<Func<object>> expression, bool allowEmptyStrings = false)
+    {
+        if (expression.Body is not UnaryExpression { Operand: MemberExpression memberExpression })
+        {
+            if (expression.Body is not MemberExpression tmp)
+            {
+                throw new InvalidOperationException($"Expected a {nameof(MemberExpression)}.");
+            }
+
+            memberExpression = tmp;
+        }
+
+        var property = (PropertyInfo)memberExpression.Member;
+
+        var setMethod = property.GetSetMethod();
+
+        setMethod.Should().NotBeNull();
+
+        var isExternalInitType = typeof(System.Runtime.CompilerServices.IsExternalInit);
+
+        setMethod!.ReturnParameter.GetRequiredCustomModifiers().Should().Contain(isExternalInitType);
+    }
+
     private static object? GetDefault(Type t)
     {
         return t.IsValueType ? Activator.CreateInstance(t) : null;

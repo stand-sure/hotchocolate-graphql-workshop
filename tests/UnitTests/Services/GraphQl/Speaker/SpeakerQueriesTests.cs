@@ -1,4 +1,4 @@
-namespace UnitTests.Services.GraphQl;
+namespace UnitTests.Services.GraphQl.Speaker;
 
 using System.Text.Json;
 
