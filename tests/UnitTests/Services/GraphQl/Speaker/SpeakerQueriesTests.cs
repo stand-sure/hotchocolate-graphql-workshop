@@ -17,7 +17,6 @@ public class SpeakerQueriesTests : QueryTestsBase
 {
     private readonly ITestOutputHelper outputHelper;
     private readonly Fixture fixture;
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpeakerQueriesTests"/> class.
@@ -44,7 +43,7 @@ public class SpeakerQueriesTests : QueryTestsBase
 
         this.outputHelper.WriteLine($"Expected {JsonSerializer.Serialize(speaker)}");
 
-        var actual = speakers.First().Deserialize<Speaker>(SpeakerQueriesTests.JsonSerializerOptions);
+        var actual = speakers.First().Deserialize<Speaker>(QueryTestsBase.JsonSerializerOptions);
 
         this.outputHelper.WriteLine($"Actual {JsonSerializer.Serialize(actual)}");
 

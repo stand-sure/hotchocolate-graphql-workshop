@@ -23,6 +23,7 @@ internal static class ServiceCollectionExtensionsGraphQl
             // .AddGlobalObjectIdentification()
             // .AddFiltering()
             // .AddSorting()
+            .AddMutations()
             .ModifyRequestOptions(ConfigureRequestOptions)
             .SetPagingOptions(ConfigurePagingOptions())
             .AddDiagnosticEventListener(ConfigureDiagnosticEventListener)
@@ -40,6 +41,13 @@ internal static class ServiceCollectionExtensionsGraphQl
             .AddTypeExtension<SpeakerQueries>();
     }
 
+    internal static IRequestExecutorBuilder AddMutations(this IRequestExecutorBuilder builder)
+    {
+        return builder
+            .AddMutationType(descriptor => descriptor.Name(OperationTypeNames.Mutation))
+            .AddTypeExtension<SpeakerMutations>();
+    }
+
     private static IRequestExecutorBuilder AddErrorFilters(this IRequestExecutorBuilder builder)
     {
         return builder.AddErrorFilter<ExceptionMessageErrorFilter>();
@@ -50,7 +58,7 @@ internal static class ServiceCollectionExtensionsGraphQl
         int cost = context.Complexity + context.ChildComplexity;
         var message = $"Cost: {context.Selection.Name} {cost}";
 
-        ServiceCollectionExtensionsGraphQl.logger.LogInformation("{message}", message);
+        ServiceCollectionExtensionsGraphQl.logger.LogInformation("{Message}", message);
 
         return cost;
     }

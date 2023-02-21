@@ -1,5 +1,6 @@
 namespace UnitTests.Services.GraphQl;
 
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 using ConferencePlanner.Data;
@@ -22,6 +23,8 @@ using Moq;
 public abstract partial class QueryTestsBase : IDisposable
 {
     private const string DatabaseName = "InMemoryDb";
+
+    protected static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="QueryTestsBase" /> class.
@@ -64,7 +67,7 @@ public abstract partial class QueryTestsBase : IDisposable
 
     protected ApplicationDbContext ApplicationDbContext { get; }
 
-    protected DbContextOptions<ApplicationDbContext> DbContextOptions { get; private set; }
+    protected DbContextOptions<ApplicationDbContext> DbContextOptions { get; private set; } = null!;
 
     private RequestExecutorProxy ExecutorProxy { get; }
 

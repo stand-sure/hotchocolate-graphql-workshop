@@ -14,6 +14,9 @@ ConferencePlanner.Service.Speaker.AddSpeakerInput.Website.init -> void
 ConferencePlanner.Service.Speaker.AddSpeakerPayload
 ConferencePlanner.Service.Speaker.AddSpeakerPayload.AddSpeakerPayload(ConferencePlanner.Models.Speaker! speaker) -> void
 ConferencePlanner.Service.Speaker.AddSpeakerPayload.Speaker.get -> ConferencePlanner.Models.Speaker!
+ConferencePlanner.Service.Speaker.SpeakerMutations
+ConferencePlanner.Service.Speaker.SpeakerMutations.AddSpeakerAsync(ConferencePlanner.Service.Speaker.AddSpeakerInput! input, ConferencePlanner.Data.ApplicationDbContext! context) -> System.Threading.Tasks.Task<ConferencePlanner.Service.Speaker.AddSpeakerPayload!>!
+ConferencePlanner.Service.Speaker.SpeakerMutations.SpeakerMutations() -> void
 ConferencePlanner.Service.Speaker.SpeakerQueries
 ConferencePlanner.Service.Speaker.SpeakerQueries.GetSpeakers(ConferencePlanner.Data.ApplicationDbContext! context) -> System.Linq.IQueryable<ConferencePlanner.Models.Speaker!>!
 ConferencePlanner.Service.Speaker.SpeakerQueries.SpeakerQueries() -> void
