@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 internal static class ServiceCollectionExtensions
 {
     private const string ConnectionStringName = "ConferencePlanner";
-    private const string MigrationsAssemblyName = "Service";
+    private const string MigrationsAssemblyName = "ConferencePlannerService";
 
     public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
