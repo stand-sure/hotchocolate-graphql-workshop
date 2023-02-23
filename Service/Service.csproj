@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
@@ -7,7 +7,8 @@
         <Company>Stand Sure</Company>
         <Product>ConferencePlannerService</Product>
         <AssemblyName>ConferencePlannerService</AssemblyName>
-    </PropertyGroup>
+      <UserSecretsId>6d2a201b-3649-494a-a973-53c0d1a72d2c</UserSecretsId>
+  </PropertyGroup>
 
     <PropertyGroup>
         <RootNamespace>ConferencePlanner.Service</RootNamespace>
