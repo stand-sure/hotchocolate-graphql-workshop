@@ -10,30 +10,31 @@ using JetBrains.Annotations;
 [PublicAPI]
 internal static class MethodChecker
 {
-    public static MethodInfo VerifyMethod<TReturn>(Expression<Func<TReturn>> expression)
+    public static MethodInfo VerifyMethod<TReturn>(Expression<Func<object?>> expression)
     {
         var methodCallExpression = expression.Body as MethodCallExpression;
 
         methodCallExpression.Should().NotBeNull();
+        methodCallExpression!.Method.ReturnParameter.ParameterType.Should().BeAssignableTo<TReturn>();
 
-        return methodCallExpression!.Method;
+        return methodCallExpression.Method;
     }
 
     public static IEnumerable<TAttribute> VerifyMethodAttribute<TAttribute>(Expression<Func<object?>> expression)
         where TAttribute : Attribute
     {
-        var method = VerifyMethod(expression);
+        var method = VerifyMethod<object?>(expression);
 
-        IEnumerable<TAttribute> attributes = method.GetCustomAttributes<TAttribute>();
+        IEnumerable<TAttribute> attributes = method.GetCustomAttributes<TAttribute>().ToList();
 
         attributes.Should().NotBeEmpty();
 
         return attributes;
     }
 
-    public static ParameterInfo? VerifyParameter<TMethodReturn>(Expression<Func<TMethodReturn>> expression, string parameterName)
+    public static ParameterInfo? VerifyParameter(Expression<Func<object?>> expression, string parameterName)
     {
-        var method = VerifyMethod(expression);
+        var method = VerifyMethod<object?>(expression);
 
         var parameter = method.GetParameters().SingleOrDefault(p => p.Name == parameterName);
 
@@ -42,9 +43,9 @@ internal static class MethodChecker
         return parameter;
     }
 
-    public static ParameterInfo? VerifyParameter<TMethodReturn>(Expression<Func<TMethodReturn>> expression, Type parameterType)
+    public static ParameterInfo? VerifyParameter(Expression<Func<object?>> expression, Type parameterType)
     {
-        var method = VerifyMethod(expression);
+        var method = VerifyMethod<object?>(expression);
 
         var parameter = method.GetParameters().SingleOrDefault(p => p.ParameterType == parameterType);
 

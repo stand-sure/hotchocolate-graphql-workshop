@@ -32,6 +32,12 @@ public class SpeakerMutationsTests : QueryTestsBase
     }
 
     [Fact]
+    public void AddSpeakerAsyncShouldReturnTaskAddSpeakerPayload()
+    {
+        MethodChecker.VerifyMethod<Task<AddSpeakerPayload>>(() => this.Target.AddSpeakerAsync(default!, default!));
+    }
+
+    [Fact]
     public void AddSpeakerAsyncShouldUseUseApplicationDbContextAttribute()
     {
         MethodChecker.VerifyMethodAttribute<UseApplicationDbContextAttribute>(() => this.Target.AddSpeakerAsync(default!, default!));
