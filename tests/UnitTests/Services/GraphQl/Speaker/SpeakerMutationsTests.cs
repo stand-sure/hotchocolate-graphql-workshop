@@ -13,6 +13,8 @@ using FluentAssertions;
 
 using HotChocolate;
 
+using Microsoft.EntityFrameworkCore;
+
 using Xunit.Abstractions;
 using Xunit.Categories;
 
@@ -34,7 +36,10 @@ public class SpeakerMutationsTests : QueryTestsBase
     [Fact]
     public void AddSpeakerAsyncShouldReturnTaskAddSpeakerPayload()
     {
-        MethodChecker.VerifyMethod<Task<AddSpeakerPayload>>(() => this.Target.AddSpeakerAsync(default!, default!));
+        var input = this.Fixture.Create<AddSpeakerInput>();
+        var context = new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>());
+
+        MethodChecker.VerifyMethod<Task<AddSpeakerPayload>>(() => this.Target.AddSpeakerAsync(input, context));
     }
 
     [Fact]
