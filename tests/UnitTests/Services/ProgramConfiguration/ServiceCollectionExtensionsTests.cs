@@ -44,7 +44,7 @@ public class ServiceCollectionExtensionsTests
     [Fact]
     public void ConfigureDbContextFactoryShouldConfigureMigrationsAssembly()
     {
-        this.npgsqlOptionsExtension.MigrationsAssembly.Should().Be("Service");
+        this.npgsqlOptionsExtension.MigrationsAssembly.Should().Be("ConferencePlannerService");
     }
 
     private static IConfiguration MakeConfiguration()

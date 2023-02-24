@@ -1,6 +1,5 @@
 namespace UnitTests.Services.GraphQl.Speaker;
 
-using System.Reflection;
 using System.Text.Json;
 
 using AutoFixture;
@@ -35,21 +34,15 @@ public class SpeakerMutationsTests : QueryTestsBase
     [Fact]
     public void AddSpeakerAsyncShouldUseUseApplicationDbContextAttribute()
     {
-        var a = this.GetAddSpeakerAsyncMethod()?
-            .GetCustomAttribute<UseApplicationDbContextAttribute>();
-
-        a.Should().NotBeNull();
+        MethodChecker.VerifyMethodAttribute<UseApplicationDbContextAttribute>(() => this.Target.AddSpeakerAsync(default!, default!));
     }
 
     [Fact]
     public void AddSpeakerAsyncShouldUseScopedDbContext()
     {
-        var parameterInfo = this.GetAddSpeakerAsyncMethod()?
-            .GetParameters().Single(info => info.ParameterType == typeof(ApplicationDbContext));
-
-        var a = parameterInfo?.GetCustomAttribute<ScopedServiceAttribute>();
-
-        a.Should().NotBeNull();
+        MethodChecker.VerifyParameterAttribute<ScopedServiceAttribute>(
+            () => this.Target.AddSpeakerAsync(default!, default!),
+            typeof(ApplicationDbContext));
     }
 
     [Fact]
@@ -75,13 +68,8 @@ public class SpeakerMutationsTests : QueryTestsBase
         var expectedSpeaker = this.Fixture.Create<Speaker>();
         this.TestOutputHelper.WriteLine($"Expected {JsonSerializer.Serialize(expectedSpeaker)}");
 
-        string query = @"mutation addSpeaker{addSpeaker(input:{bio:""" +
-                       expectedSpeaker.Bio +
-                       @""",name:""" +
-                       expectedSpeaker.Name +
-                       @""",website:""" +
-                       expectedSpeaker.Website +
-                       @"""}){speaker{bio id name website}}}";
+        var query =
+            $@"mutation addSpeaker{{addSpeaker(input:{{bio:""{expectedSpeaker.Bio}"",name:""{expectedSpeaker.Name}"",website:""{expectedSpeaker.Website}""}}){{speaker{{bio id name website}}}}}}";
 
         string result = await this.ExecuteQueryAsync(query).ConfigureAwait(false);
 
@@ -91,21 +79,8 @@ public class SpeakerMutationsTests : QueryTestsBase
         var actual = speaker.Deserialize<Speaker>(QueryTestsBase.JsonSerializerOptions);
         this.TestOutputHelper.WriteLine($"Actual {JsonSerializer.Serialize(actual)}");
 
-        expectedSpeaker.Id = actual.Id;
+        actual.Should().NotBeNull();
+        expectedSpeaker.Id = actual!.Id;
         actual.Should().BeEquivalentTo(expectedSpeaker);
-    }
-
-    private MethodInfo? GetAddSpeakerAsyncMethod()
-    {
-        return this.Target.GetType().GetMethod(
-            nameof(this.Target.AddSpeakerAsync),
-            BindingFlags.Instance | BindingFlags.Public,
-            null,
-            new[]
-            {
-                typeof(AddSpeakerInput),
-                typeof(ApplicationDbContext),
-            },
-            null);
     }
 }
