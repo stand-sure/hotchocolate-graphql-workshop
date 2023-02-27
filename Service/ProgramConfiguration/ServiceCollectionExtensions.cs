@@ -11,7 +11,14 @@ internal static class ServiceCollectionExtensions
 
     public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-        services.AddDbContextFactory<ApplicationDbContext>((_, builder) => builder.ConfigureDbContextFactory(configuration));
+        services.AddDbContextFactory<ApplicationDbContext>((_, builder) =>
+        {
+            builder.ConfigureDbContextFactory(configuration);
+        });
+
+        services.AddHealthChecks()
+            .AddDbContextCheck<ApplicationDbContext>("Startup", tags: new[] { "ready" });
+
         services.AddInstrumentation(environment, configuration);
         services.ConfigureGraphServices(environment);
     }

@@ -1,0 +1,17 @@
+apiVersion: skaffold/v4beta2
+kind: Config
+metadata:
+  name: conference-planner-service
+build:
+  artifacts:
+  - image: standsure/conference-planner-service
+    context: .
+    docker:
+      buildArgs:
+        DOCKER_BUILDKIT: '1'
+    platforms: []
+  local: 
+    useBuildkit: true
+manifests:
+  rawYaml:
+  - manifests.yaml
