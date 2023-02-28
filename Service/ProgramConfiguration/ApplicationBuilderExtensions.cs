@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 using Prometheus;
 
+using Serilog;
+
 internal static class ApplicationBuilderExtensions
 {
     public static void ConfigureApplication(this IApplicationBuilder app)
     {
+        app.UseSerilogRequestLogging();
         app.UseRouting();
         app.UseHttpMetrics();
 

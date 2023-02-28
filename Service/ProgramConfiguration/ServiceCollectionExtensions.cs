@@ -4,6 +4,8 @@ using ConferencePlanner.Data;
 
 using Microsoft.EntityFrameworkCore;
 
+using Serilog;
+
 internal static class ServiceCollectionExtensions
 {
     private const string ConnectionStringName = "ConferencePlanner";
@@ -11,10 +13,8 @@ internal static class ServiceCollectionExtensions
 
     public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-        services.AddDbContextFactory<ApplicationDbContext>((_, builder) =>
-        {
-            builder.ConfigureDbContextFactory(configuration);
-        });
+        services.AddLogging(builder => builder.AddSerilog());
+        services.AddDbContextFactory<ApplicationDbContext>((_, builder) => { builder.ConfigureDbContextFactory(configuration); });
 
         services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>("Startup", tags: new[] { "ready" });

@@ -65,8 +65,10 @@ internal static class ServiceCollectionExtensionsGraphQl
 
     private static QueryLoggerDiagnosticEventListener ConfigureDiagnosticEventListener(IServiceProvider provider)
     {
-        return new QueryLoggerDiagnosticEventListener(
-            ActivatorUtilities.GetServiceOrCreateInstance<ILogger<QueryLoggerDiagnosticEventListener>>(provider));
+        var loggerFactory = ActivatorUtilities.GetServiceOrCreateInstance<ILoggerFactory>(provider);
+        var logger = loggerFactory.CreateLogger<QueryLoggerDiagnosticEventListener>();
+
+        return new QueryLoggerDiagnosticEventListener(logger);
     }
 
     private static void ConfigureInstrumentationOptions(InstrumentationOptions options)
