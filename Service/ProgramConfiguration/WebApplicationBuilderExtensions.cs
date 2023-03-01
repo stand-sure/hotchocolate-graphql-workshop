@@ -1,8 +1,6 @@
 namespace ConferencePlanner.Service.ProgramConfiguration;
 
 using Serilog;
-using Serilog.Formatting.Compact;
-using Serilog.Sinks.Grafana.Loki;
 
 internal static class WebApplicationBuilderExtensions
 {
@@ -15,7 +13,6 @@ internal static class WebApplicationBuilderExtensions
                 .ReadFrom.Services(provider)
         );
 
-        //// builder.Logging.ConfigureLogging(builder.Configuration);
         builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
     }
 }

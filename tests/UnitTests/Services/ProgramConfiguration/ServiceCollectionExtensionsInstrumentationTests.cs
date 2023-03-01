@@ -1,7 +1,5 @@
 namespace UnitTests.Services.ProgramConfiguration;
 
-using System.Diagnostics;
-
 using ConferencePlanner.Service.ProgramConfiguration;
 
 using FluentAssertions;
@@ -13,7 +11,6 @@ using Microsoft.Extensions.Hosting;
 
 using Moq;
 
-using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -64,11 +61,11 @@ public class ServiceCollectionExtensionsInstrumentationTests
 
         var tracerProvider = this.serviceCollection.BuildServiceProvider().GetService<TracerProvider>();
 
-        var instrumentationList = tracerProvider.GetType()
+        var instrumentationList = tracerProvider!.GetType()
             .GetProperty("Instrumentations", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            .GetValue((tracerProvider)) as List<object?>;
+            ?.GetValue((tracerProvider)) as List<object?>;
 
-        instrumentationList.Should().Contain(o => o.GetType().Name == "HttpClientInstrumentation");
+        instrumentationList.Should().Contain(o => o!.GetType().Name == "HttpClientInstrumentation");
     }
 
     [Fact]
@@ -78,11 +75,11 @@ public class ServiceCollectionExtensionsInstrumentationTests
 
         var tracerProvider = this.serviceCollection.BuildServiceProvider().GetService<TracerProvider>();
 
-        var instrumentationList = tracerProvider.GetType()
+        var instrumentationList = tracerProvider!.GetType()
             .GetProperty("Instrumentations", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            .GetValue((tracerProvider)) as List<object?>;
+            ?.GetValue((tracerProvider)) as List<object?>;
 
-        instrumentationList.Should().Contain(o => o.GetType().Name == "AspNetCoreInstrumentation");
+        instrumentationList.Should().Contain(o => o!.GetType().Name == "AspNetCoreInstrumentation");
     }
 
     [Fact]
@@ -92,11 +89,11 @@ public class ServiceCollectionExtensionsInstrumentationTests
 
         var tracerProvider = this.serviceCollection.BuildServiceProvider().GetService<TracerProvider>();
 
-        var instrumentationList = tracerProvider.GetType()
+        var instrumentationList = tracerProvider!.GetType()
             .GetProperty("Instrumentations", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            .GetValue((tracerProvider)) as List<object?>;
+            ?.GetValue((tracerProvider)) as List<object?>;
 
-        instrumentationList.Should().Contain(o => o.GetType().Name == "EntityFrameworkInstrumentation");
+        instrumentationList.Should().Contain(o => o!.GetType().Name == "EntityFrameworkInstrumentation");
     }
 
     [Fact]
@@ -112,7 +109,7 @@ public class ServiceCollectionExtensionsInstrumentationTests
 
         builderMock.Setup(builder => builder.AddSource(It.IsAny<string[]>()))
             .Callback<string[]>((names) => { sources.AddRange(names); })
-            .Returns<string[]>((names) => builderMock.Object);
+            .Returns<string[]>((_) => builderMock.Object);
 
         var tracerProviderBuilder = builderMock.Object;
         tracerProviderBuilder.ConfigureTraceProvider(resourceBuilder, this.configuration, this.environment, serviceName);

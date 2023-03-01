@@ -32,7 +32,9 @@ public class ServiceCollectionExtensionsTests
             .ConfigureDbContextFactory(configuration)
             .Options;
 
+#pragma warning disable EF1001
         this.npgsqlOptionsExtension = options.FindExtension<NpgsqlOptionsExtension>()!;
+#pragma warning restore EF1001
     }
 
     [Fact]

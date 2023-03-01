@@ -26,7 +26,7 @@ public class ConfigurationBuilderExtensionsTests
     }
 
     [Fact]
-    public void ConfigureConfigurationShouldAddAppSettings()
+    public void ConfigureConfigurationShouldAddSecretAppSettings()
     {
         var sources = new List<IConfigurationSource>();
 
@@ -44,6 +44,6 @@ public class ConfigurationBuilderExtensionsTests
 
         IEnumerable<JsonConfigurationSource> jsonSources = sources.Where(source => source is JsonConfigurationSource).Cast<JsonConfigurationSource>();
 
-        jsonSources.Should().Contain(source => source.Path == "appsettings.json");
+        jsonSources.Should().Contain(source => source.Path == "secrets/appsettings.json");
     }
 }

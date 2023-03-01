@@ -51,9 +51,9 @@ internal static class ServiceCollectionExtensionsInstrumentation
             options.Protocol = JaegerExportProtocol.HttpBinaryThrift;
         });
 
-        if (environment.IsDevelopment())
-        {
-            providerBuilder.AddConsoleExporter(options => options.Targets = ConsoleExporterOutputTargets.Console);
-        }
+        //// if (environment.IsDevelopment())
+        //// {
+        ////     providerBuilder.AddConsoleExporter(options => options.Targets = ConsoleExporterOutputTargets.Console);
+        //// }
     }
 }

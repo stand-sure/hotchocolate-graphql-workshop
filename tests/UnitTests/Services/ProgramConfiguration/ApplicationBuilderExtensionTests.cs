@@ -1,10 +1,13 @@
 namespace UnitTests.Services.ProgramConfiguration;
 
+using System.Text.Json;
+
 using ConferencePlanner.Service.ProgramConfiguration;
 
 using FluentAssertions;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +32,41 @@ public class ApplicationBuilderExtensionTests
     [Fact]
     public void ConfigureApplicationShouldSetUpGraphQlEndpoint()
     {
+        const string expectedEndpointDisplayName = "Hot Chocolate GraphQL Pipeline";
+
+        this.VerifyEndpoint(expectedEndpointDisplayName);
+    }
+
+    [Fact]
+    public void ConfigureApplicationShouldSetUpMetricsEndpoint()
+    {
+        const string expectedEndpointDisplayName = "Prometheus metrics";
+
+        this.VerifyEndpoint(expectedEndpointDisplayName);
+    }
+
+    [Fact]
+    public void ConfigureApplicationShouldSetUpReadyHealthEndpoint()
+    {
+        const string expectedEndpointDisplayName = "Health checks";
+
+        IEnumerable<Endpoint> endpoints = this.VerifyEndpoint(expectedEndpointDisplayName);
+
+        endpoints.Cast<RouteEndpoint>().Should().Contain(endpoint => endpoint.RoutePattern.RawText == "/healthz/ready");
+    }
+
+    [Fact]
+    public void ConfigureApplicationShouldSetUpLiveHealthEndpoint()
+    {
+        const string expectedEndpointDisplayName = "Health checks";
+
+        IEnumerable<Endpoint> endpoints = this.VerifyEndpoint(expectedEndpointDisplayName);
+
+        endpoints.Cast<RouteEndpoint>().Should().Contain(endpoint => endpoint.RoutePattern.RawText == "/healthz/live");
+    }
+
+    private IEnumerable<Endpoint> VerifyEndpoint(string expectedEndpointDisplayName)
+    {
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
         builder.ConfigureBuilder();
 
@@ -38,8 +76,11 @@ public class ApplicationBuilderExtensionTests
         var endpointDataSource = app.Services.GetRequiredService<EndpointDataSource>();
         endpointDataSource.Should().NotBeNull();
 
-        List<string?> names = endpointDataSource.Endpoints.Select(endpoint => endpoint.DisplayName).ToList();
-        this.testOutputHelper.WriteLine(string.Join(null, names));
-        names.Should().BeEquivalentTo("Hot Chocolate GraphQL Pipeline");
+        this.testOutputHelper.WriteLine(string.Join(null, endpointDataSource.Endpoints));
+        IEnumerable<Endpoint> endpoints = endpointDataSource.Endpoints.Where(endpoint => endpoint.DisplayName == expectedEndpointDisplayName).ToList();
+
+        endpoints.Should().NotBeNullOrEmpty();
+
+        return endpoints;
     }
 }
