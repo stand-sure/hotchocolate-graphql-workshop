@@ -1,0 +1,10 @@
+ConferencePlanner.Models.Speaker
+ConferencePlanner.Models.Speaker.Bio.get -> string?
+ConferencePlanner.Models.Speaker.Bio.set -> void
+ConferencePlanner.Models.Speaker.Id.get -> int
+ConferencePlanner.Models.Speaker.Id.set -> void
+ConferencePlanner.Models.Speaker.Name.get -> string?
+ConferencePlanner.Models.Speaker.Name.set -> void
+ConferencePlanner.Models.Speaker.Speaker() -> void
+ConferencePlanner.Models.Speaker.Website.get -> string?
+ConferencePlanner.Models.Speaker.Website.set -> void

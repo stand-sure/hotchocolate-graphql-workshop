@@ -1,0 +1,4 @@
+ConferencePlanner.Data.ApplicationDbContext
+ConferencePlanner.Data.ApplicationDbContext.ApplicationDbContext(Microsoft.EntityFrameworkCore.DbContextOptions<ConferencePlanner.Data.ApplicationDbContext!>! options) -> void
+ConferencePlanner.Data.ApplicationDbContext.Speakers.get -> Microsoft.EntityFrameworkCore.DbSet<ConferencePlanner.Models.Speaker!>!
+ConferencePlanner.Data.ApplicationDbContext.Speakers.set -> void

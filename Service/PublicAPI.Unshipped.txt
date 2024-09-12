@@ -1,0 +1,23 @@
+ConferencePlanner.Service.GraphQl.ExceptionMessageErrorFilter
+ConferencePlanner.Service.GraphQl.ExceptionMessageErrorFilter.ExceptionMessageErrorFilter() -> void
+ConferencePlanner.Service.GraphQl.ExceptionMessageErrorFilter.OnError(HotChocolate.IError! error) -> HotChocolate.IError!
+ConferencePlanner.Service.GraphQl.ObjectFieldDescriptorExtensions
+ConferencePlanner.Service.Migrations.Speakers
+ConferencePlanner.Service.Speaker.AddSpeakerInput
+ConferencePlanner.Service.Speaker.AddSpeakerInput.AddSpeakerInput(string! Name, string! Bio, string! Website) -> void
+ConferencePlanner.Service.Speaker.AddSpeakerInput.Bio.get -> string!
+ConferencePlanner.Service.Speaker.AddSpeakerInput.Bio.init -> void
+ConferencePlanner.Service.Speaker.AddSpeakerInput.Name.get -> string!
+ConferencePlanner.Service.Speaker.AddSpeakerInput.Name.init -> void
+ConferencePlanner.Service.Speaker.AddSpeakerInput.Website.get -> string!
+ConferencePlanner.Service.Speaker.AddSpeakerInput.Website.init -> void
+ConferencePlanner.Service.Speaker.AddSpeakerPayload
+ConferencePlanner.Service.Speaker.AddSpeakerPayload.AddSpeakerPayload(ConferencePlanner.Models.Speaker! speaker) -> void
+ConferencePlanner.Service.Speaker.AddSpeakerPayload.Speaker.get -> ConferencePlanner.Models.Speaker!
+ConferencePlanner.Service.Speaker.SpeakerMutations
+ConferencePlanner.Service.Speaker.SpeakerMutations.AddSpeakerAsync(ConferencePlanner.Service.Speaker.AddSpeakerInput! input, ConferencePlanner.Data.ApplicationDbContext! context) -> System.Threading.Tasks.Task<ConferencePlanner.Service.Speaker.AddSpeakerPayload!>!
+ConferencePlanner.Service.Speaker.SpeakerMutations.SpeakerMutations() -> void
+ConferencePlanner.Service.Speaker.SpeakerQueries
+ConferencePlanner.Service.Speaker.SpeakerQueries.GetSpeakers(ConferencePlanner.Data.ApplicationDbContext! context) -> System.Linq.IQueryable<ConferencePlanner.Models.Speaker!>!
+ConferencePlanner.Service.Speaker.SpeakerQueries.SpeakerQueries() -> void
+static ConferencePlanner.Service.GraphQl.ObjectFieldDescriptorExtensions.UseDbContext<TDbContext>(this HotChocolate.Types.IObjectFieldDescriptor! descriptor) -> HotChocolate.Types.IObjectFieldDescriptor!
